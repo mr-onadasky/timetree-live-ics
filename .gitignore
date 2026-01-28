@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+
+# Env / config
+.env
+config/config.yaml
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
