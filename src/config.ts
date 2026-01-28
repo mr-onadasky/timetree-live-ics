@@ -104,9 +104,29 @@ function loadFromYaml(configPath: string, outputBase: string): ExportJob[] {
   }
 }
 
+function resolveOutputBase(): string {
+  const explicit = process.env.OUTPUT_BASE;
+  const defaultBase = '/data';
+  const tryBase = explicit ?? defaultBase;
+  try {
+    ensureDir({ existsSync, mkdirSync }, tryBase);
+    return tryBase;
+  } catch (err) {
+    if (!explicit && tryBase === defaultBase) {
+      const fallback = path.join(process.cwd(), 'data');
+      ensureDir({ existsSync, mkdirSync }, fallback);
+      console.warn(
+        `Cannot write to ${defaultBase}; falling back to local directory ${fallback}. Set OUTPUT_BASE to override.`
+      );
+      return fallback;
+    }
+    throw err;
+  }
+}
+
 export function loadJobs(): { jobs: ExportJob[]; configPath?: string } {
-  const DEFAULT_OUTPUT_PATH = process.env.OUTPUT_PATH ?? '/data/timetree.ics';
-  const DEFAULT_OUTPUT_BASE = process.env.OUTPUT_BASE ?? '/data';
+  const OUTPUT_BASE = resolveOutputBase();
+  const DEFAULT_OUTPUT_PATH = process.env.OUTPUT_PATH ?? path.join(OUTPUT_BASE, 'timetree.ics');
   const DEFAULT_CONFIG_PATH = '/config/config.yaml';
   const envConfigPath = process.env.TIMETREE_CONFIG;
   const CONFIG_PATH = envConfigPath ?? DEFAULT_CONFIG_PATH;
@@ -116,7 +136,7 @@ export function loadJobs(): { jobs: ExportJob[]; configPath?: string } {
   const useConfig = CONFIG_PATH && (CONFIG_REQUESTED || configExists);
 
   if (useConfig) {
-    const jobs = loadFromYaml(CONFIG_PATH, DEFAULT_OUTPUT_BASE);
+    const jobs = loadFromYaml(CONFIG_PATH, OUTPUT_BASE);
     return { jobs, configPath: CONFIG_PATH };
   }
 

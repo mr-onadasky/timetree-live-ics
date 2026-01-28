@@ -88,11 +88,13 @@ describe('server endpoints', () => {
     const { res } = await perform(app, 'GET', '/health');
     expect(res.statusCode).toBe(200);
     const body = res._getJSONData();
-    expect(body.outputs[0]).toBe(path.join(dir, '<redacted>.ics'));
+    expect(body).not.toHaveProperty('outputs');
+    expect(body).not.toHaveProperty('jobs');
+    expect(body).not.toHaveProperty('outputPath');
   });
 });
 
-async function perform(app: any, method: string, url: string, opts: { headers?: Record<string, string> } = {}) {
+async function perform(app: any, method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', url: string, opts: { headers?: Record<string, string> } = {}) {
   const req = httpMocks.createRequest({
     method,
     url,

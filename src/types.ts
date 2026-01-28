@@ -36,16 +36,5 @@ export type HealthPayload = {
   lastError: string | null;
   running: boolean;
   schedule: string;
-  outputPath: string | null;
-  outputs: string[];
-  jobs: Array<{
-    id: string;
-    email: string;
-    calendarCode: string | null;
-    outputPath: string;
-    lastRun: string | null;
-    lastSuccess: string | null;
-    lastError: string | null;
-    running: boolean;
-  }>;
+  // Sensitive details are logged, not returned.
 };

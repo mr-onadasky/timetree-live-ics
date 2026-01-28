@@ -63,8 +63,7 @@ Place the file in the mounted `/config` volume (or point `TIMETREE_CONFIG` elsew
 - `randomToken` / `token` *(YAML per-entry)* – Set `randomToken: true` (default when `output` missing) to generate a short base36 token for filenames, or provide a fixed `token` string yourself.
 - `auth` *(YAML per-entry)* – `{ type: basic, username, password }` to protect the ICS file with HTTP Basic Auth.
 
-Security note: ICS files are otherwise public. Options: deterministic names (easy to share), custom/ random `{token}` for obscurity, or per-file Basic Auth. For stronger guarantees, front the service with a reverse proxy that enforces auth or IP allowlisting.
-The `/health` endpoint masks tokenized filenames (`<redacted>.ics`) so random tokens are not exposed.
+Security note: ICS files are otherwise public. Options: deterministic names (easy to share), custom/ random `{token}` for obscurity, or per-file Basic Auth. For stronger guarantees, front the service with a reverse proxy that enforces auth or IP allowlisting. The `/health` endpoint only returns minimal status (no paths or tokens); detailed info is logged server-side with tokens masked.
 
 ## How it works
 - `src/index.ts` (compiled to `dist/index.js`) runs an initial export, serves `/data` via Express, and schedules subsequent exports with `node-cron`.

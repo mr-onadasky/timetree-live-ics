@@ -50,7 +50,10 @@ export function buildApp(
       lastError: state.lastError ?? null,
       running: state.running,
       schedule: cronSchedule,
-      outputPath: jobs.length === 1 ? maskIfToken(jobs[0]) : null,
+    };
+
+    // Log detailed info (masked tokens) without returning it
+    const details = {
       outputs: jobs.map(maskIfToken),
       jobs: jobs.map((job) => ({
         id: job.id,
@@ -63,6 +66,8 @@ export function buildApp(
         running: state.jobs[job.id].running,
       })),
     };
+    console.debug('Health detail', JSON.stringify(details));
+
     res.json(payload);
   });
 
