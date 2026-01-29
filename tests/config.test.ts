@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { describe, it, expect, afterEach } from 'vitest';
-import { loadJobs } from '../src/config';
+import { loadJobs } from '../src/lib/config';
 
 function withTempDir(fn: (dir: string) => void) {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'tt-'));

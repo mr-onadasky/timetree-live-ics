@@ -3,12 +3,12 @@ import cron from 'node-cron';
 import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 
-import { loadJobs } from './config';
-import { ensureDir } from './utils';
-import { RunState } from './types';
-import { runExport } from './exporter';
-import { buildApp } from './app';
-import { logger } from './logger';
+import { loadJobs } from './lib/config';
+import { ensureDir } from './lib/utils';
+import { RunState } from './lib/types';
+import { runExport } from './lib/exporter';
+import { buildApp } from './server/app';
+import { logger } from './lib/logger';
 
 const CRON_SCHEDULE = process.env.CRON_SCHEDULE ?? '*/30 * * * *';
 const STARTUP_DELAY_SECONDS = parseDurationSeconds(process.env.STARTUP_DELAY ?? '0s');
@@ -24,7 +24,7 @@ function parseDurationSeconds(raw: string): number {
   if (!trimmed) return 0;
   const match = /^(\d+)(s|m|h)?$/i.exec(trimmed);
   if (!match) {
-    console.error(`Invalid STARTUP_DELAY: ${raw}. Use formats like "30s", "2m", "1h".`);
+    logger.error(`Invalid STARTUP_DELAY: ${raw}. Use formats like "30s", "2m", "1h".`);
     process.exit(1);
   }
   const value = Number(match[1]);

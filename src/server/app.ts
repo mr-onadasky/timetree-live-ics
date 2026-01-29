@@ -1,9 +1,9 @@
 import express from 'express';
 import path from 'node:path';
 import { Buffer } from 'node:buffer';
-import { ExportJob, HealthPayload, RunState } from './types';
-import { maskIfToken } from './healthHelpers';
-import { logger } from './logger';
+import { ExportJob, HealthPayload, RunState } from '../lib/types';
+import { maskIfToken } from '../lib/health';
+import { logger } from '../lib/logger';
 
 export function buildApp(
   jobs: ExportJob[],

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { maskIfTokenForTest } from '../src/healthHelpers';
+import { maskIfTokenForTest } from '../src/lib/health';
 
 describe('health masking', () => {
   it('masks tokenized output paths', () => {
