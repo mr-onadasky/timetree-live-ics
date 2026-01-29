@@ -3,6 +3,7 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { ensureDir, randomToken, slugify } from './utils';
 import { BasicAuth, ExportJob } from './types';
+import { logger } from './logger';
 
 function parseBasicAuth(entry: any): BasicAuth | undefined {
   const auth = entry?.auth ?? entry?.basicAuth ?? entry?.basic_auth;
@@ -87,7 +88,7 @@ function buildJobsFromConfig(entries: any[], outputBase: string): ExportJob[] {
 
 function loadFromYaml(configPath: string, outputBase: string): ExportJob[] {
   if (!existsSync(configPath)) {
-    console.error(`TIMETREE_CONFIG file not found: ${configPath}`);
+    logger.error(`TIMETREE_CONFIG file not found: ${configPath}`);
     process.exit(1);
   }
   try {
@@ -99,7 +100,7 @@ function loadFromYaml(configPath: string, outputBase: string): ExportJob[] {
     }
     return buildJobsFromConfig(entries, outputBase);
   } catch (err) {
-    console.error(`Failed to parse TIMETREE_CONFIG (${configPath}):`, err);
+    logger.error({ err }, `Failed to parse TIMETREE_CONFIG (${configPath})`);
     process.exit(1);
   }
 }
@@ -115,7 +116,7 @@ function resolveOutputBase(): string {
     if (!explicit && tryBase === defaultBase) {
       const fallback = path.join(process.cwd(), 'data');
       ensureDir({ existsSync, mkdirSync }, fallback);
-      console.warn(
+      logger.warn(
         `Cannot write to ${defaultBase}; falling back to local directory ${fallback}. Set OUTPUT_BASE to override.`
       );
       return fallback;
@@ -146,7 +147,7 @@ export function loadJobs(): { jobs: ExportJob[]; configPath?: string } {
   const TIMETREE_CALENDAR_CODE = process.env.TIMETREE_CALENDAR_CODE;
 
   if (!TIMETREE_EMAIL || !TIMETREE_PASSWORD) {
-    console.error(
+    logger.error(
       'Set TIMETREE_EMAIL, TIMETREE_PASSWORD, or provide TIMETREE_CONFIG (defaults to /config/config.yaml).'
     );
     process.exit(1);

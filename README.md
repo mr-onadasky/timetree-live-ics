@@ -65,6 +65,7 @@ Place the file in the mounted `/config` volume (or point `TIMETREE_CONFIG` elsew
 - `randomToken` / `token` *(YAML per-entry)* – Set `randomToken: true` (default when `output` missing) to generate a short base36 token for filenames, or provide a fixed `token` string yourself.
 - `auth` *(YAML per-entry)* – `{ type: basic, username, password }` to protect the ICS file with HTTP Basic Auth.
 - `STARTUP_DELAY` *(default `0s`)* – Delay the first export after process start. Accepts `Xs`, `Xm`, or `Xh` (e.g., `30s`, `2m`, `1h`).
+- `LOG_LEVEL` *(default `info`)* – Logger verbosity (`fatal`, `error`, `warn`, `info`, `debug`, `trace`).
 
 Security note: ICS files are otherwise public. Options: deterministic names (easy to share), custom/ random `{token}` for obscurity, or per-file Basic Auth. For stronger guarantees, front the service with a reverse proxy that enforces auth or IP allowlisting. The `/health` endpoint only returns minimal status (no paths or tokens); detailed info is logged server-side with tokens masked.
 

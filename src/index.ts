@@ -7,13 +7,14 @@ import { ensureDir } from './utils';
 import { RunState } from './types';
 import { runExport } from './exporter';
 import { buildApp } from './app';
+import { logger } from './logger';
 
 const CRON_SCHEDULE = process.env.CRON_SCHEDULE ?? '*/30 * * * *';
 const STARTUP_DELAY_SECONDS = parseDurationSeconds(process.env.STARTUP_DELAY ?? '0s');
 const PORT = Number(process.env.PORT ?? '8080');
 
 if (!cron.validate(CRON_SCHEDULE)) {
-  console.error(`Invalid CRON_SCHEDULE: ${CRON_SCHEDULE}`);
+  logger.error(`Invalid CRON_SCHEDULE: ${CRON_SCHEDULE}`);
   process.exit(1);
 }
 
@@ -50,7 +51,7 @@ for (const job of jobs) {
 
 // Kick off first export (optionally delayed)
 if (STARTUP_DELAY_SECONDS > 0) {
-  console.log(`Delaying first export by ${STARTUP_DELAY_SECONDS} seconds...`);
+  logger.info(`Delaying first export by ${STARTUP_DELAY_SECONDS} seconds...`);
   setTimeout(() => void runExport(jobs, state), STARTUP_DELAY_SECONDS * 1000);
 } else {
   void runExport(jobs, state);
@@ -63,11 +64,11 @@ cron.schedule(CRON_SCHEDULE, () => void runExport(jobs, state), { timezone: 'UTC
 const app = buildApp(jobs, state, CRON_SCHEDULE, outputDirs, configPath);
 
 app.listen(PORT, () => {
-  console.log(`Serving ${outputDirs.join(', ')} on port ${PORT}`);
-  console.log(`Cron schedule: ${CRON_SCHEDULE}`);
-  if (configPath) console.log(`Config path: ${configPath}`);
-  console.log('Outputs:');
+  logger.info(`Serving ${outputDirs.join(', ')} on port ${PORT}`);
+  logger.info(`Cron schedule: ${CRON_SCHEDULE}`);
+  if (configPath) logger.info(`Config path: ${configPath}`);
+  logger.info('Outputs:');
   for (const job of jobs) {
-    console.log(`- http://localhost:${PORT}/${path.basename(job.outputPath)}`);
+    logger.info(`- http://localhost:${PORT}/${path.basename(job.outputPath)}`);
   }
 });

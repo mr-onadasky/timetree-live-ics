@@ -3,6 +3,7 @@ import path from 'node:path';
 import { Buffer } from 'node:buffer';
 import { ExportJob, HealthPayload, RunState } from './types';
 import { maskIfToken } from './healthHelpers';
+import { logger } from './logger';
 
 export function buildApp(
   jobs: ExportJob[],
@@ -66,16 +67,16 @@ export function buildApp(
         running: state.jobs[job.id].running,
       })),
     };
-    console.debug('Health detail', JSON.stringify(details));
+    logger.debug({ details }, 'Health detail');
 
     res.json(payload);
   });
 
   // Logging
-  if (configPath) console.log(`Config path: ${configPath}`);
-  console.log('Outputs:');
+  if (configPath) logger.info(`Config path: ${configPath}`);
+  logger.info('Outputs:');
   for (const job of jobs) {
-    console.log(`- ${path.basename(job.outputPath)}`);
+    logger.info(`- ${path.basename(job.outputPath)}`);
   }
 
   return app;

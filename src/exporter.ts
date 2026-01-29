@@ -1,12 +1,13 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { ExportJob, RunState } from './types';
+import { logger } from './logger';
 
 const execFileAsync = promisify(execFile);
 
 export async function runExport(jobs: ExportJob[], state: RunState) {
   if (state.running) {
-    console.warn('Export already running; skipping this tick.');
+    logger.warn('Export already running; skipping this tick.');
     return;
   }
   state.running = true;
@@ -30,7 +31,7 @@ export async function runExport(jobs: ExportJob[], state: RunState) {
       if (stderr) process.stderr.write(stderr);
       jobState.lastSuccess = new Date();
       jobState.lastError = undefined;
-      console.log(
+      logger.info(
         `[${jobState.lastSuccess.toISOString()}] Export (${job.email}${
           job.calendarCode ? `:${job.calendarCode}` : ''
         }) -> ${job.outputPath}`
@@ -40,7 +41,7 @@ export async function runExport(jobs: ExportJob[], state: RunState) {
         err instanceof Error ? err.message : typeof err === 'string' ? err : 'unknown error';
       jobState.lastError = message;
       errors.push(`${job.id}: ${message}`);
-      console.error(
+      logger.error(
         `[${new Date().toISOString()}] Export failed for ${job.email}${
           job.calendarCode ? `:${job.calendarCode}` : ''
         }: ${message}`
