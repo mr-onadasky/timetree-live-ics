@@ -2,6 +2,8 @@
 
 Containerized TimeTree → ICS sync with a live URL. Now implemented in TypeScript (Node) with an internal cron and static server. It still uses the upstream [`timetree-exporter`](https://github.com/eoleedi/TimeTree-Exporter) Python CLI under the hood.
 
+[![CI & Publish](https://github.com/TrippyTechLlama/timetree-live-ics/actions/workflows/ci-release.yml/badge.svg)](https://github.com/TrippyTechLlama/timetree-live-ics/actions/workflows/ci-release.yml)
+
 ## Quick start
 
 ```bash
