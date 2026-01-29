@@ -2,11 +2,13 @@
 
 FROM node:20-slim AS build
 
-# Install python + timetree-exporter (Python CLI)
+# Install python + timetree-exporter (Python CLI) in venv (avoid PEP 668 issues)
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3 python3-pip \
+  && apt-get install -y --no-install-recommends python3 python3-venv \
   && rm -rf /var/lib/apt/lists/*
-RUN pip3 install --no-cache-dir timetree-exporter
+RUN python3 -m venv /opt/venv \
+  && /opt/venv/bin/pip install --no-cache-dir timetree-exporter \
+  && ln -s /opt/venv/bin/timetree-exporter /usr/local/bin/timetree-exporter
 
 WORKDIR /app
 
@@ -22,9 +24,11 @@ RUN npm prune --omit=dev
 FROM node:20-slim
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3 python3-pip \
+  && apt-get install -y --no-install-recommends python3 python3-venv \
   && rm -rf /var/lib/apt/lists/*
-RUN pip3 install --no-cache-dir timetree-exporter
+RUN python3 -m venv /opt/venv \
+  && /opt/venv/bin/pip install --no-cache-dir timetree-exporter \
+  && ln -s /opt/venv/bin/timetree-exporter /usr/local/bin/timetree-exporter
 
 WORKDIR /app
 
