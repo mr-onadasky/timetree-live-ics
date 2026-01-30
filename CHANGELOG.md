@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/mr-onadasky/timetree-live-ics/compare/timetree-live-ics-v0.2.0...timetree-live-ics-v0.3.0) (2026-01-30)
+
+
+### Features
+
+* Add container version tags ([#2](https://github.com/mr-onadasky/timetree-live-ics/issues/2)) ([0816f09](https://github.com/mr-onadasky/timetree-live-ics/commit/0816f09ab3805b9abbc16bf3b3aa0a8d8eab112a))
+
 ## [0.2.0](https://github.com/mr-onadasky/timetree-live-ics/compare/timetree-live-ics-v0.1.0...timetree-live-ics-v0.2.0) (2026-01-30)
 
 
