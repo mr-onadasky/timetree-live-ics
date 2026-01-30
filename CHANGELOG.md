@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/mr-onadasky/timetree-live-ics/compare/timetree-live-ics-v0.3.1...timetree-live-ics-v0.3.2) (2026-01-30)
+
+
+### Bug Fixes
+
+* action script error ([d58d6ab](https://github.com/mr-onadasky/timetree-live-ics/commit/d58d6ab863e1d28dc09510fbe1082f4a64ecceec))
+
 ## [0.3.1](https://github.com/mr-onadasky/timetree-live-ics/compare/timetree-live-ics-v0.3.0...timetree-live-ics-v0.3.1) (2026-01-30)
 
 
