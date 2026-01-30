@@ -39,18 +39,6 @@ jobs:
             packages: write
         steps:
             - uses: actions/checkout@v4
-            - name: Set build metadata
-              run: |
-                  echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
-            - name: Compute app version
-              id: app_version
-              run: |
-                  if [ -n "${{ steps.meta.outputs.version }}" ]; then
-                    echo "APP_VERSION=${{ steps.meta.outputs.version }}" >> $GITHUB_ENV
-                  else
-                    echo "APP_VERSION=$(python - <<'PY'\nimport json\nprint(json.load(open('package.json'))['version'])\nPY)" >> $GITHUB_ENV
-                  fi
-
             - name: Docker meta
               id: meta
               uses: docker/metadata-action@v5
@@ -61,6 +49,14 @@ jobs:
                       type=ref,event=tag
                       type=sha
                       type=raw,value=latest,enable={{is_default_branch}}
+            - name: Set build metadata
+              run: |
+                  echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+                  APP_VERSION="${{ steps.meta.outputs.version }}"
+                  if [ -z "$APP_VERSION" ]; then
+                    APP_VERSION=$(node -p "require('./package.json').version")
+                  fi
+                  echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
@@ -96,18 +92,6 @@ jobs:
             contents: read
         steps:
             - uses: actions/checkout@v4
-            - name: Set build metadata
-              run: |
-                  echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
-            - name: Compute app version
-              id: app_version
-              run: |
-                  if [ -n "${{ steps.meta.outputs.version }}" ]; then
-                    echo "APP_VERSION=${{ steps.meta.outputs.version }}" >> $GITHUB_ENV
-                  else
-                    echo "APP_VERSION=$(python - <<'PY'\nimport json\nprint(json.load(open('package.json'))['version'])\nPY)" >> $GITHUB_ENV
-                  fi
-
             - name: Docker meta
               id: meta
               uses: docker/metadata-action@v5
@@ -118,6 +102,14 @@ jobs:
                       type=ref,event=tag
                       type=sha
                       type=raw,value=latest,enable={{is_default_branch}}
+            - name: Set build metadata
+              run: |
+                  echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+                  APP_VERSION="${{ steps.meta.outputs.version }}"
+                  if [ -z "$APP_VERSION" ]; then
+                    APP_VERSION=$(node -p "require('./package.json').version")
+                  fi
+                  echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
