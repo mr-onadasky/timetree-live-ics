@@ -76,12 +76,14 @@ jobs:
             - name: Compose extra tags (GHCR)
               id: taglist-ghcr
               run: |
-                  echo "EXTRA_TAGS<<'EOF'" >> "$GITHUB_OUTPUT"
-                  if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-                    echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${{ env.IMAGE_NAME }}:${APP_VERSION}" >> "$GITHUB_OUTPUT"
-                    echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${{ env.IMAGE_NAME }}:v${APP_VERSION}" >> "$GITHUB_OUTPUT"
-                  fi
-                  echo "EOF" >> "$GITHUB_OUTPUT"
+                  {
+                    echo "EXTRA_TAGS<<EOF"
+                    if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                      echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:${APP_VERSION}"
+                      echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:v${APP_VERSION}"
+                    fi
+                    echo "EOF"
+                  } >> "$GITHUB_OUTPUT"
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
@@ -152,12 +154,14 @@ jobs:
             - name: Compose extra tags (Docker Hub)
               id: taglist-dh
               run: |
-                  echo "EXTRA_TAGS<<'EOF'" >> "$GITHUB_OUTPUT"
-                  if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-                    echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${APP_VERSION}" >> "$GITHUB_OUTPUT"
-                    echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:v${APP_VERSION}" >> "$GITHUB_OUTPUT"
-                  fi
-                  echo "EOF" >> "$GITHUB_OUTPUT"
+                  {
+                    echo "EXTRA_TAGS<<EOF"
+                    if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                      echo "docker.io/${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${APP_VERSION}"
+                      echo "docker.io/${DOCKERHUB_USERNAME}/${IMAGE_NAME}:v${APP_VERSION}"
+                    fi
+                    echo "EOF"
+                  } >> "$GITHUB_OUTPUT"
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
