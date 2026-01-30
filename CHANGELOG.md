@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.4.1...v0.4.2) (2026-01-30)
+
+
+### Bug Fixes
+
+* yet another attempt to fix container versioning ([6ac261e](https://github.com/mr-onadasky/timetree-live-ics/commit/6ac261e64fa7905ac8a9414da74026e96e3b3e1c))
+
 ## [0.4.1](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.4.0...v0.4.1) (2026-01-30)
 
 
