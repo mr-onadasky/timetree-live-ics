@@ -4,6 +4,8 @@ on:
     push:
         branches: [main]
         tags: ["v*", "timetree-live-ics-v*"]
+    release:
+        types: [published]
     pull_request:
         branches: [main]
 
@@ -32,7 +34,7 @@ jobs:
     publish-ghcr:
         name: Publish GHCR Image
         needs: test
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))) || github.event_name == 'release'
         runs-on: ubuntu-latest
         env:
             APP_VERSION: "0.0.0"   # default; overwritten by metadata step
@@ -74,14 +76,12 @@ jobs:
             - name: Compose extra tags (GHCR)
               id: taglist-ghcr
               run: |
-                  {
-                    echo "EXTRA_TAGS<<EOF"
-                    if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-                      echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:${APP_VERSION}"
-                      echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${IMAGE_NAME}:v${APP_VERSION}"
-                    fi
-                    echo "EOF"
-                  } >> "$GITHUB_OUTPUT"
+                  echo "EXTRA_TAGS<<'EOF'" >> "$GITHUB_OUTPUT"
+                  if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                    echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${{ env.IMAGE_NAME }}:${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                    echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${{ env.IMAGE_NAME }}:v${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                  fi
+                  echo "EOF" >> "$GITHUB_OUTPUT"
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
@@ -113,7 +113,7 @@ jobs:
     publish-dockerhub:
         name: Publish Docker Hub Image
         needs: test
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))) || github.event_name == 'release'
         runs-on: ubuntu-latest
         env:
             APP_VERSION: "0.0.0"   # default; overwritten by metadata step
@@ -152,14 +152,12 @@ jobs:
             - name: Compose extra tags (Docker Hub)
               id: taglist-dh
               run: |
-                  {
-                    echo "EXTRA_TAGS<<EOF"
-                    if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-                      echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${IMAGE_NAME}:${APP_VERSION}"
-                      echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${IMAGE_NAME}:v${APP_VERSION}"
-                    fi
-                    echo "EOF"
-                  } >> "$GITHUB_OUTPUT"
+                  echo "EXTRA_TAGS<<'EOF'" >> "$GITHUB_OUTPUT"
+                  if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                    echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                    echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:v${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                  fi
+                  echo "EOF" >> "$GITHUB_OUTPUT"
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
