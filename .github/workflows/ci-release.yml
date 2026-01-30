@@ -59,16 +59,27 @@ jobs:
               run: |
                   echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
                   APP_VERSION="${{ steps.meta.outputs.version }}"
+                  # Fallbacks: tag name, then package.json
                   if [ -z "$APP_VERSION" ] && [ "${GITHUB_REF_TYPE}" = "tag" ]; then
                     case "${GITHUB_REF_NAME}" in
                       timetree-live-ics-v*) APP_VERSION="${GITHUB_REF_NAME#timetree-live-ics-v}" ;;
                       v*) APP_VERSION="${GITHUB_REF_NAME#v}" ;;
                     esac
                   fi
-                  if [ -z "$APP_VERSION" ]; then
+                  # If still empty or not semver-ish, read package.json
+                  if ! echo "$APP_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     APP_VERSION=$(node -p "require('./package.json').version")
                   fi
                   echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+            - name: Compose extra tags (GHCR)
+              id: taglist-ghcr
+              run: |
+                  echo "EXTRA_TAGS<<'EOF'" >> "$GITHUB_OUTPUT"
+                  if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                    echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${{ env.IMAGE_NAME }}:${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                    echo "ghcr.io/${GITHUB_REPOSITORY_OWNER}/${{ env.IMAGE_NAME }}:v${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                  fi
+                  echo "EOF" >> "$GITHUB_OUTPUT"
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
@@ -87,8 +98,7 @@ jobs:
                   file: ./Dockerfile
                   push: true
                   tags: |
-                      ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}
-                      ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:v${{ env.APP_VERSION }}
+                      ${{ steps.taglist-ghcr.outputs.EXTRA_TAGS }}
                       ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   build-args: |
@@ -133,10 +143,19 @@ jobs:
                       v*) APP_VERSION="${GITHUB_REF_NAME#v}" ;;
                     esac
                   fi
-                  if [ -z "$APP_VERSION" ]; then
+                  if ! echo "$APP_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     APP_VERSION=$(node -p "require('./package.json').version")
                   fi
                   echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+            - name: Compose extra tags (Docker Hub)
+              id: taglist-dh
+              run: |
+                  echo "EXTRA_TAGS<<'EOF'" >> "$GITHUB_OUTPUT"
+                  if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                    echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                    echo "docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:v${APP_VERSION}" >> "$GITHUB_OUTPUT"
+                  fi
+                  echo "EOF" >> "$GITHUB_OUTPUT"
 
             - name: Set up Buildx
               uses: docker/setup-buildx-action@v3
@@ -154,8 +173,7 @@ jobs:
                   file: ./Dockerfile
                   push: true
                   tags: |
-                      docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.APP_VERSION }}
-                      docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:v${{ env.APP_VERSION }}
+                      ${{ steps.taglist-dh.outputs.EXTRA_TAGS }}
                       ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   build-args: |
