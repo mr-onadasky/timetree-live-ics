@@ -47,6 +47,7 @@ jobs:
                   tags: |
                       type=ref,event=branch,branch=main
                       type=ref,event=tag
+                      type=match,pattern=^timetree-live-ics-v(?<version>.*)$
                       type=semver,pattern={{version}}
                       type=semver,pattern=v{{version}}
                       type=sha
@@ -55,6 +56,12 @@ jobs:
               run: |
                   echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
                   APP_VERSION="${{ steps.meta.outputs.version }}"
+                  if [ -z "$APP_VERSION" ] && [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                    case "${GITHUB_REF_NAME}" in
+                      timetree-live-ics-v*) APP_VERSION="${GITHUB_REF_NAME#timetree-live-ics-v}" ;;
+                      v*) APP_VERSION="${GITHUB_REF_NAME#v}" ;;
+                    esac
+                  fi
                   if [ -z "$APP_VERSION" ]; then
                     APP_VERSION=$(node -p "require('./package.json').version")
                   fi
@@ -102,6 +109,7 @@ jobs:
                   tags: |
                       type=ref,event=branch,branch=main
                       type=ref,event=tag
+                      type=match,pattern=^timetree-live-ics-v(?<version>.*)$
                       type=semver,pattern={{version}}
                       type=semver,pattern=v{{version}}
                       type=sha
@@ -110,6 +118,12 @@ jobs:
               run: |
                   echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
                   APP_VERSION="${{ steps.meta.outputs.version }}"
+                  if [ -z "$APP_VERSION" ] && [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+                    case "${GITHUB_REF_NAME}" in
+                      timetree-live-ics-v*) APP_VERSION="${GITHUB_REF_NAME#timetree-live-ics-v}" ;;
+                      v*) APP_VERSION="${GITHUB_REF_NAME#v}" ;;
+                    esac
+                  fi
                   if [ -z "$APP_VERSION" ]; then
                     APP_VERSION=$(node -p "require('./package.json').version")
                   fi
