@@ -23,6 +23,10 @@ RUN npm prune --omit=dev
 
 FROM node:20-slim
 
+ARG APP_VERSION=0.0.0
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+
 RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 python3-venv \
   && rm -rf /var/lib/apt/lists/*
@@ -41,7 +45,15 @@ RUN mkdir -p /config
 ENV PORT=8080 \
     OUTPUT_PATH=/data/timetree.ics \
     CRON_SCHEDULE="*/30 * * * *" \
-    NODE_ENV=production
+    NODE_ENV=production \
+    APP_VERSION=${APP_VERSION} \
+    GIT_SHA=${GIT_SHA} \
+    BUILD_TIME=${BUILD_TIME}
+
+LABEL org.opencontainers.image.title="timetree-live-ics" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.revision="${GIT_SHA}" \
+      org.opencontainers.image.created="${BUILD_TIME}"
 
 VOLUME ["/data", "/config"]
 EXPOSE 8080

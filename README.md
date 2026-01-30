@@ -85,6 +85,7 @@ Security note: ICS files are otherwise public. Options: deterministic names (eas
 - Conventional Commits drive automated releases via Release Please (see `.github/workflows/release-please.yml`).
 - While `<1.0`, breaking changes bump the **minor** version (configured with `bump-minor-pre-major: true`); features also bump minor; fixes bump patch.
 - Tags and changelog/`package.json` are generated in the release PR; merge it to cut the release and publish tags/images.
+- Container images are labeled with version/commit/build time (OCI labels) and receive build args to expose the same info via `/version`.
 
 ## How it works
 - `src/index.ts` (compiled to `dist/index.js`) runs an initial export, serves `/data` via Express, and schedules subsequent exports with `node-cron`.
