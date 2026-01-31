@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.6.0...v0.6.1) (2026-01-31)
+
+
+### Bug Fixes
+
+* attempt to fix publish action trigger ([575b6e9](https://github.com/mr-onadasky/timetree-live-ics/commit/575b6e931c8b72649a06c3dd5e2243c73919b3b5))
+
 ## [0.6.0](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.5.0...v0.6.0) (2026-01-31)
 
 
