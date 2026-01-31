@@ -1,15 +1,16 @@
+import 'tsconfig-paths/register';
 import 'dotenv/config';
 import cron from 'node-cron';
 import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 
-import { loadJobs } from './lib/config';
-import { ensureDir } from './lib/utils';
-import { RunState } from './lib/types';
-import { runExport } from './lib/exporter';
-import { buildApp } from './server/app';
-import { logger } from './lib/logger';
-import { buildInfo } from './lib/version';
+import { loadJobs } from '@/lib/config';
+import { ensureDir } from '@/lib/utils';
+import { RunState } from '@/lib/types';
+import { runExport } from '@/lib/exporter';
+import { buildApp } from '@/server/app';
+import { logger } from '@/lib/logger';
+import { buildInfo } from '@/lib/version';
 
 const CRON_SCHEDULE = process.env.CRON_SCHEDULE ?? '*/30 * * * *';
 const STARTUP_DELAY_SECONDS = parseDurationSeconds(process.env.STARTUP_DELAY ?? '0s');

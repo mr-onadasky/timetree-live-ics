@@ -1,7 +1,7 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { ExportJob, RunState } from './types';
-import { logger } from './logger';
+import { ExportJob, RunState } from '@/lib/types';
+import { logger } from '@/lib/logger';
 
 const execFileAsync = promisify(execFile);
 

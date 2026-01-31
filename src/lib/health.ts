@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { ExportJob } from './types';
+import { ExportJob } from '@/lib/types';
 
 export function maskIfToken(job: Pick<ExportJob, 'outputPath' | 'token'>) {
   if (!job.token) return job.outputPath;

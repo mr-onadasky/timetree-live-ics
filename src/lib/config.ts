@@ -2,9 +2,9 @@ import { existsSync, readFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { parse as parseYaml } from 'yaml';
-import { ensureDir, slugify } from './utils';
-import { BasicAuth, ExportJob } from './types';
-import { logger } from './logger';
+import { ensureDir, slugify } from '@/lib/utils';
+import { BasicAuth, ExportJob } from '@/lib/types';
+import { logger } from '@/lib/logger';
 
 function parseBasicAuth(entry: any): BasicAuth | undefined {
   const auth = entry?.auth ?? entry?.basicAuth ?? entry?.basic_auth;

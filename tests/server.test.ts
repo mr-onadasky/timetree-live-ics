@@ -2,8 +2,8 @@ import path from 'node:path';
 import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import os from 'node:os';
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildApp } from '../src/server/app';
-import { RunState, ExportJob } from '../src/lib/types';
+import { buildApp } from '@/server/app';
+import { RunState, ExportJob } from '@/lib/types';
 import httpMocks from 'node-mocks-http';
 
 function tempDir() {

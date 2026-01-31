@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { maskIfTokenForTest } from '../src/lib/health';
-import { buildInfo } from '../src/lib/version';
+import { maskIfTokenForTest } from '@/lib/health';
+import { buildInfo } from '@/lib/version';
 
 describe('health masking', () => {
   it('masks tokenized output paths', () => {
