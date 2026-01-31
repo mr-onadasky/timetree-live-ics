@@ -1,6 +1,6 @@
 {
   "name": "timetree-live-ics",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Containerized TimeTree -> ICS exporter with live URL, implemented in TypeScript.",
   "main": "dist/index.js",
   "scripts": {

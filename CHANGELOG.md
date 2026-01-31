@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.5.0...v0.6.0) (2026-01-31)
+
+
+### Features
+
+* Implement timetree api support in typescript ([e97c5d9](https://github.com/mr-onadasky/timetree-live-ics/commit/e97c5d9bb3f49c175f5f759558779881cb7e5bb7))
+
 ## [0.5.0](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.4.7...v0.5.0) (2026-01-31)
 
 
