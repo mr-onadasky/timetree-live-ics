@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.1...v0.8.2) (2026-02-01)
+
+
+### Bug Fixes
+
+* avoid publishing broken docker container by smoke test in ci ([f7e62c5](https://github.com/mr-onadasky/timetree-live-ics/commit/f7e62c5bde52df376f086a1d9a3395d1cf67a730))
+
 ## [0.8.1](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.0...v0.8.1) (2026-02-01)
 
 
