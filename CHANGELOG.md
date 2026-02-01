@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.4...v0.8.5) (2026-02-01)
+
+
+### Bug Fixes
+
+* undo last fix, error was in my environment :s ([4cb4ea5](https://github.com/mr-onadasky/timetree-live-ics/commit/4cb4ea5ee3cb8735ca9029c91f3746edb17d7273))
+
 ## [0.8.4](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.3...v0.8.4) (2026-02-01)
 
 
