@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.0...v0.8.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* attempt to fix absolute path error ([8f9c069](https://github.com/mr-onadasky/timetree-live-ics/commit/8f9c069ccc4223f5b74d1a389c1d5d5383a8cb8b))
+
 ## [0.8.0](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.7.0...v0.8.0) (2026-02-01)
 
 
