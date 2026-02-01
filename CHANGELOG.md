@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.4](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.3...v0.8.4) (2026-02-01)
+
+
+### Bug Fixes
+
+* attempt to fix version error upon run time ([348e783](https://github.com/mr-onadasky/timetree-live-ics/commit/348e7832cee80d055cbfce440b31d24da5f4ad47))
+
 ## [0.8.3](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.8.2...v0.8.3) (2026-02-01)
 
 
