@@ -14,11 +14,27 @@ export function buildApp(
   configPath?: string
 ) {
   const app = express();
+  const resolvedOutputDirs = outputDirs.map((dir) => path.resolve(dir));
+  const logOutputPaths = process.env.LOG_OUTPUT_PATHS === 'true';
 
   // Per-file basic auth based on config (runs before static)
   app.use((req, res, next) => {
-    const requested = path.basename(req.path.split('?')[0]);
-    const job = jobs.find((j) => path.basename(j.outputPath) === requested);
+    const requestedPath = req.path.split('?')[0];
+    const stripped = requestedPath.replace(/^\/+/, '');
+
+    let job: ExportJob | undefined;
+    for (const dir of resolvedOutputDirs) {
+      const candidate = path.resolve(dir, stripped);
+      const dirPrefix = dir.endsWith(path.sep) ? dir : `${dir}${path.sep}`;
+      if (!candidate.startsWith(dirPrefix)) continue; // prevent path traversal
+
+      const match = jobs.find((j) => path.resolve(j.outputPath) === candidate);
+      if (match) {
+        job = match;
+        break; // respect static directory order
+      }
+    }
+
     if (!job || !job.auth) return next();
 
     if (job.auth.type === 'basic') {
@@ -82,7 +98,7 @@ export function buildApp(
   if (configPath) logger.info(`Config path: ${configPath}`);
   logger.info('Outputs:');
   for (const job of jobs) {
-    logger.info(`- ${path.basename(job.outputPath)}`);
+    logger.info(`- ${logOutputPaths ? job.outputPath : maskIfToken(job)}`);
   }
 
   return app;

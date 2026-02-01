@@ -115,6 +115,92 @@ describe('server endpoints', () => {
     expect(body.version).toBeDefined();
     expect(typeof body.version).toBe('string');
   });
+
+  it('respects output directory order when enforcing auth', async () => {
+    const dirSecure = tempDir();
+    const dirPublic = tempDir();
+    try {
+      const filename = 'shared.ics';
+      writeFileSync(path.join(dirSecure, filename), 'SECURE');
+      writeFileSync(path.join(dirPublic, filename), 'PUBLIC');
+
+      const jobs: ExportJob[] = [
+        {
+          id: 'public',
+          email: 'public@example.com',
+          password: 'pw',
+          outputPath: path.join(dirPublic, filename),
+        },
+        {
+          id: 'secure',
+          email: 'secure@example.com',
+          password: 'pw',
+          outputPath: path.join(dirSecure, filename),
+          auth: { type: 'basic', username: 'user', password: 'pass' },
+        },
+      ];
+      const state: RunState = {
+        running: false,
+        jobs: {
+          public: { running: false },
+          secure: { running: false },
+        },
+      };
+
+      const app = buildApp(jobs, state, '* * * * *', [dirSecure, dirPublic]);
+
+      const noAuth = await perform(app, 'GET', '/shared.ics');
+      expect(noAuth.res.statusCode).toBe(401);
+
+      const ok = await perform(app, 'GET', '/shared.ics', {
+        headers: { authorization: 'Basic dXNlcjpwYXNz' },
+      });
+      expect(ok.res.statusCode).toBe(200);
+    } finally {
+      rmSync(dirSecure, { recursive: true, force: true });
+      rmSync(dirPublic, { recursive: true, force: true });
+    }
+  });
+
+  it('serves public file when public directory is first', async () => {
+    const dirSecure = tempDir();
+    const dirPublic = tempDir();
+    try {
+      const filename = 'shared.ics';
+      writeFileSync(path.join(dirSecure, filename), 'SECURE');
+      writeFileSync(path.join(dirPublic, filename), 'PUBLIC');
+
+      const jobs: ExportJob[] = [
+        {
+          id: 'public',
+          email: 'public@example.com',
+          password: 'pw',
+          outputPath: path.join(dirPublic, filename),
+        },
+        {
+          id: 'secure',
+          email: 'secure@example.com',
+          password: 'pw',
+          outputPath: path.join(dirSecure, filename),
+          auth: { type: 'basic', username: 'user', password: 'pass' },
+        },
+      ];
+      const state: RunState = {
+        running: false,
+        jobs: {
+          public: { running: false },
+          secure: { running: false },
+        },
+      };
+
+      const app = buildApp(jobs, state, '* * * * *', [dirPublic, dirSecure]);
+      const res = await perform(app, 'GET', '/shared.ics');
+      expect(res.res.statusCode).toBe(200);
+    } finally {
+      rmSync(dirSecure, { recursive: true, force: true });
+      rmSync(dirPublic, { recursive: true, force: true });
+    }
+  });
 });
 
 async function perform(app: any, method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', url: string, opts: { headers?: Record<string, string> } = {}) {

@@ -2,8 +2,10 @@
 
 Containerized TimeTree → ICS sync with a live URL. Fully implemented in TypeScript (Node) with an internal cron and static server.
 
-[![CI & Publish](https://github.com/TrippyTechLlama/timetree-live-ics/actions/workflows/ci-release.yml/badge.svg)](https://github.com/TrippyTechLlama/timetree-live-ics/actions/workflows/ci-release.yml)
+[![CI](https://github.com/mr-onadasky/timetree-live-ics/actions/workflows/ci.yml/badge.svg)](https://github.com/mr-onadasky/timetree-live-ics/actions/workflows/ci.yml)
+[![Publish Images](https://github.com/mr-onadasky/timetree-live-ics/actions/workflows/publish.yml/badge.svg)](https://github.com/mr-onadasky/timetree-live-ics/actions/workflows/publish.yml)
 [![Release Please](https://github.com/TrippyTechLlama/timetree-live-ics/actions/workflows/release-please.yml/badge.svg)](https://github.com/TrippyTechLlama/timetree-live-ics/actions/workflows/release-please.yml)
+
 
 ## Quick start
 
@@ -42,7 +44,7 @@ exports:
     # 2) custom short ID
     # output: /data/{token}.ics
     # token: MYSHORTID
-    # 3) random short ID (default when output omitted)
+    # 3) deterministic-but-obscure short ID (default when output omitted)
     # randomToken: true
 
     # Basic auth for this file (download protection)
@@ -57,7 +59,7 @@ exports:
     # output is optional; defaults to /data/{token}.ics (token = random base36)
 ```
 
-Place the file in the mounted `/config` volume (or point `TIMETREE_CONFIG` elsewhere). Each calendar gets its own ICS file using the output template (tokens: `{email}`, `{calendar}`, `{token}`).
+Place the file in the mounted `/config` volume (or point `TIMETREE_CONFIG` elsewhere). Each calendar gets its own ICS file using the output template (tokens: `{email}`, `{calendar}`, `{token}`). When `randomToken` is true and no explicit `token` is provided, the token is **stable** per email+calendar (salted by `TOKEN_SEED`) so the URL doesn’t change across restarts; pick a unique `TOKEN_SEED` to make it unguessable.
 
 ## Environment variables
 - `TIMETREE_EMAIL` *(required unless using `TIMETREE_CONFIG`)* – TimeTree account email.
@@ -70,7 +72,9 @@ Place the file in the mounted `/config` volume (or point `TIMETREE_CONFIG` elsew
 - `APP_VERSION` *(optional)* – Override the reported version (otherwise uses `package.json`).
 - `GIT_SHA` / `GITHUB_SHA` / `COMMIT_SHA` *(optional)* – Attach commit hash to `/version`.
 - `BUILD_TIME` *(optional)* – Attach build timestamp to `/version`.
+- `TOKEN_SEED` *(optional)* – Salt for deterministic tokens when `randomToken` is used in YAML. Set to a unique, secret value to make tokenized filenames hard to guess while staying stable across restarts.
 - `randomToken` / `token` *(YAML per-entry)* – Set `randomToken: true` (default when `output` missing) to generate a short base36 token for filenames, or provide a fixed `token` string yourself.
+- `LOG_OUTPUT_PATHS` *(optional, default `false`)* – When `true`, startup and export logs print full output paths (including tokens). Leave `false` in shared/CI environments to avoid leaking URLs.
 - `auth` *(YAML per-entry)* – `{ type: basic, username, password }` to protect the ICS file with HTTP Basic Auth.
 - `STARTUP_DELAY` *(default `0s`)* – Delay the first export after process start. Accepts `Xs`, `Xm`, or `Xh` (e.g., `30s`, `2m`, `1h`).
 - `LOG_LEVEL` *(default `info`)* – Logger verbosity (`fatal`, `error`, `warn`, `info`, `debug`, `trace`).

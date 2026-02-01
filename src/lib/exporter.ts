@@ -4,6 +4,9 @@ import { logger } from '@/lib/logger';
 import { login, resolveCalendar, fetchEvents } from '@/lib/timetree';
 import { buildICS } from '@/lib/ics';
 import { buildInfo } from '@/lib/version';
+import { maskIfToken } from '@/lib/health';
+
+const LOG_OUTPUT_PATHS = process.env.LOG_OUTPUT_PATHS === 'true';
 
 export async function runExport(jobs: ExportJob[], state: RunState) {
   if (state.running) {
@@ -40,7 +43,7 @@ export async function runExport(jobs: ExportJob[], state: RunState) {
       logger.info(
         `[${jobState.lastSuccess.toISOString()}] Export (${job.email}${
           job.calendarCode ? `:${job.calendarCode}` : ''
-        }) -> ${job.outputPath}`
+        }) -> ${LOG_OUTPUT_PATHS ? job.outputPath : maskIfToken(job)}`
       );
     } catch (err) {
       const message =

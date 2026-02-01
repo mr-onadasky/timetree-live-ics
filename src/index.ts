@@ -11,10 +11,12 @@ import { runExport } from '@/lib/exporter';
 import { buildApp } from '@/server/app';
 import { logger } from '@/lib/logger';
 import { buildInfo } from '@/lib/version';
+import { maskIfToken } from '@/lib/health';
 
 const CRON_SCHEDULE = process.env.CRON_SCHEDULE ?? '*/30 * * * *';
 const STARTUP_DELAY_SECONDS = parseDurationSeconds(process.env.STARTUP_DELAY ?? '0s');
 const PORT = Number(process.env.PORT ?? '8080');
+const LOG_OUTPUT_PATHS = process.env.LOG_OUTPUT_PATHS === 'true';
 
 if (!cron.validate(CRON_SCHEDULE)) {
   logger.error(`Invalid CRON_SCHEDULE: ${CRON_SCHEDULE}`);
@@ -78,6 +80,8 @@ app.listen(PORT, () => {
   if (configPath) logger.info(`Config path: ${configPath}`);
   logger.info('Outputs:');
   for (const job of jobs) {
-    logger.info(`- http://localhost:${PORT}/${path.basename(job.outputPath)}`);
+    const chosenPath = LOG_OUTPUT_PATHS ? job.outputPath : maskIfToken(job);
+    const basename = path.basename(chosenPath);
+    logger.info(`- http://localhost:${PORT}/${basename}`);
   }
 });
