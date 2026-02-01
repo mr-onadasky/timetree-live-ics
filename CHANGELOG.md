@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.6.1...v0.7.0) (2026-02-01)
+
+
+### Features
+
+* add opt-in logging of full output paths ([c45f297](https://github.com/mr-onadasky/timetree-live-ics/commit/c45f29743636cda84c57feac86535ae2c3dfaf09))
+
 ## [0.6.1](https://github.com/mr-onadasky/timetree-live-ics/compare/v0.6.0...v0.6.1) (2026-01-31)
 
 
