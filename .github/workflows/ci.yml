@@ -26,3 +26,38 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+
+  docker-smoke:
+    name: Docker Smoke /health
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t timetree-live-ics:test .
+
+      - name: Run container (delay exports to avoid real login)
+        run: |
+          docker run -d --name timetree-ics \
+            -p 8080:8080 \
+            -e STARTUP_DELAY=600 \
+            -e TIMETREE_EMAIL=dummy \
+            -e TIMETREE_PASSWORD=dummy \
+            timetree-live-ics:test
+
+      - name: Wait for /health
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8080/health | grep -q '"status"'; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Health check failed"
+          docker logs timetree-ics
+          exit 1
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f timetree-ics
